@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-PAL 10 v4.0</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--cb:#6CABDD;--cd:#1C2C5B;--cs:#98C5E9;--cl:#E8F4FD;--ca:#F5A623;--cr:#E74C3C;--cg:#27AE60;--td:#1a2332;--tm:#4a5568;--cp:#7C3AED;--cpa:#7C3AED20}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:linear-gradient(160deg,var(--cl),#dbeafe,#98C5E920);min-height:100vh}
+.hdr{background:linear-gradient(135deg,var(--cd),#243b73);padding:20px 16px 16px;color:#fff}
+.hdr h1{font-size:20px;font-weight:900}.hdr .sub{font-size:11px;opacity:.7;margin-top:2px}.hdr .auth{font-size:10px;opacity:.5;margin-top:5px}
+.logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--cb),var(--cs));display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;margin-right:10px}
+.tabs{display:flex;gap:4px;padding:10px 14px;background:rgba(255,255,255,.92);position:sticky;top:0;z-index:10;border-bottom:1px solid #e2e8f0}
+.tab{flex:1;padding:8px 4px;border-radius:9px;border:none;cursor:pointer;background:transparent;color:var(--tm);font-family:inherit;transition:.2s}
+.tab.on{background:var(--cd);color:#fff}
+.tab .ti{font-size:10px;font-weight:800;margin-top:2px}.tab .ts{font-size:9px;opacity:.7}
+.content{padding:10px 14px 90px}
+.card{background:#fff;border-radius:13px;padding:15px 16px;margin-bottom:11px;box-shadow:0 1px 3px rgba(28,44,91,.06);border-left:4px solid var(--cs)}
+.card.alert{border-left-color:var(--cr)}
+.card h3{font-size:13px;font-weight:800;color:var(--cd);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.badge{padding:2px 9px;border-radius:16px;font-size:10px;font-weight:700;display:inline-block}
+.badge-b{background:#6CABDD20;color:var(--cb)}.badge-r{background:#E74C3C20;color:var(--cr)}.badge-g{background:#27AE6020;color:var(--cg)}.badge-a{background:#F5A62320;color:var(--ca)}.badge-d{background:#1C2C5B20;color:var(--cd)}.badge-p{background:#7C3AED20;color:var(--cp)}
+.info{font-size:11px;color:var(--tm);line-height:1.5;margin-bottom:8px}
+.ref{font-size:9px;color:var(--tm);font-style:italic;margin-top:5px}
+.radio-group{display:flex;flex-direction:column;gap:4px}
+.radio-btn{display:flex;align-items:center;gap:8px;padding:7px 11px;border-radius:7px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;text-align:left;font-family:inherit;font-size:12px;color:var(--td);transition:.15s}
+.radio-btn.on{border-color:var(--cb);background:var(--cl);font-weight:700}
+.radio-dot{width:15px;height:15px;border-radius:50%;border:2px solid #cbd5e0;background:#fff;flex-shrink:0}
+.radio-btn.on .radio-dot{border:5px solid var(--cb)}
+.slider-row{margin-bottom:7px}
+.slider-row .sl-head{display:flex;justify-content:space-between;margin-bottom:2px}
+.slider-row .sl-label{font-size:11px;font-weight:600;color:var(--td)}
+.slider-row .sl-val{font-weight:800;font-size:13px;min-width:22px;text-align:right}
+.sl-btns{display:flex;gap:2px}
+.sl-btn{flex:1;height:25px;border:none;border-radius:3px;cursor:pointer;font-size:10px;font-weight:500;color:var(--tm);background:#edf1f5;font-family:inherit;transition:.1s}
+.sl-btn.on{color:#fff;font-weight:800}
+.green{color:var(--cg)}.amber{color:var(--ca)}.red{color:var(--cr)}
+.bg-green{background:var(--cg)}.bg-amber{background:var(--ca)}.bg-red{background:var(--cr)}
+.alert-box{margin:9px 14px 0;padding:9px 12px;border-radius:9px;background:#E74C3C10;border:1px solid #E74C3C30}
+.alert-box .at{font-size:11px;font-weight:800;color:var(--cr);margin-bottom:2px}
+.alert-box .ai{font-size:11px;color:var(--cr);padding:1px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:9px}
+.ppi-box{padding:7px 10px;background:var(--cl);border-radius:7px}
+.ppi-box .ppi-t{font-size:10px;color:var(--tm);font-weight:600}.ppi-box .ppi-v{font-size:15px;font-weight:800;color:var(--cd)}
+.result-box{margin-top:12px;padding:10px 13px;border-radius:8px}
+.dir-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.dir-label{font-size:11px;font-weight:700;color:var(--cd);text-align:center;margin-bottom:4px}
+.dir-btns{display:flex;gap:3px}
+.dir-btn{flex:1;padding:7px 3px;border-radius:6px;border:none;cursor:pointer;font-weight:700;font-size:11px;background:#edf1f5;color:var(--tm);font-family:inherit;transition:.15s}
+.summary{font-size:11px;line-height:2;color:var(--td)}
+.summary b{font-weight:700}
+.footer{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.93);border-top:1px solid #e2e8f0;padding:7px 14px;display:flex;justify-content:space-between;align-items:center}
+.progress-bar{margin:9px 14px 0;padding:9px 12px;border-radius:9px;background:rgba(255,255,255,.85)}
+.progress-bar .pb-title{font-size:11px;font-weight:700;color:var(--cd);margin-bottom:5px;display:flex;justify-content:space-between}
+.pb-track{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden}
+.pb-fill{height:100%;border-radius:3px;transition:width .3s}
+.pb-items{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.pb-item{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600}
+.pb-item.done{background:#27AE6018;color:var(--cg)}.pb-item.pending{background:#E74C3C10;color:var(--cr)}
+.complete-banner{margin:9px 14px 0;padding:10px 14px;border-radius:9px;background:#27AE6012;border:1px solid #27AE6030;text-align:center}
+.complete-banner .cb-text{font-size:12px;font-weight:800;color:var(--cg)}
+.complete-banner .cb-sub{font-size:10px;color:var(--tm);margin-top:2px}
+.share-row{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.share-btn{flex:1;min-width:70px;padding:8px 6px;border-radius:8px;border:none;cursor:pointer;font-family:inherit;font-size:10px;font-weight:700;color:#fff;transition:.15s}
+.share-btn:active{transform:scale(.96)}
+.share-wa{background:#25D366}.share-mail{background:#4A90D9}.share-copy{background:var(--cd)}.share-dl{background:var(--ca)}
+.toast{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--cd);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:700;z-index:100;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.footer span{font-size:9px;color:var(--tm)}
+.footer button{padding:5px 12px;border-radius:7px;font-weight:700;font-size:11px;cursor:pointer;font-family:inherit}
+.btn-next{border:none;background:var(--cd);color:#fff}.btn-prev{border:1px solid var(--cb);background:#fff;color:var(--cb)}
+textarea{width:100%;padding:9px;border-radius:7px;border:1px solid #e2e8f0;font-size:12px;min-height:45px;resize:vertical;font-family:inherit}
+.hidden{display:none}
+.flex-c{display:flex;align-items:center}
+
+/* ── NUEVO v4: info style ── */
+.info-style-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:8px}
+.is-btn{padding:8px 6px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;text-align:center;font-family:inherit;font-size:11px;color:var(--td);transition:.15s;line-height:1.4}
+.is-btn .is-icon{font-size:16px;margin-bottom:3px}
+.is-btn .is-label{font-weight:700;font-size:10px}
+.is-btn .is-desc{font-size:9px;color:var(--tm);margin-top:2px}
+.is-btn.on{border-color:var(--cp);background:#7C3AED10;color:var(--cp)}
+.is-btn.on .is-desc{color:var(--cp)}
+
+/* ── NUEVO v4: escenario block ── */
+.esc-block{border-radius:9px;padding:10px 13px;margin-top:10px;border:1.5px solid}
+.esc-block .esc-title{font-size:13px;font-weight:800;margin-bottom:2px}
+.esc-block .esc-sub{font-size:11px;font-weight:500;margin-bottom:5px}
+.esc-block .esc-stats{display:flex;gap:8px;flex-wrap:wrap}
+.esc-stat{font-size:10px;padding:3px 8px;border-radius:10px;font-weight:600}
+.esc-block .esc-rec{font-size:10px;margin-top:6px;font-weight:600;border-top:1px solid;padding-top:5px}
+
+/* ── NUEVO v4: plan fields ── */
+.plan-label{font-size:12px;font-weight:700;color:var(--cd);margin-bottom:4px;margin-top:10px;display:flex;align-items:center;gap:5px}
+.plan-label .pl-badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:10px}
+.plan-label.farm .pl-badge{background:#6CABDD20;color:var(--cb)}
+.plan-label.nofarm .pl-badge{background:#27AE6020;color:var(--cg)}
+.plan-label.directivas .pl-badge{background:#F5A62320;color:var(--ca)}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+ <div class="flex-c">
+  <div class="logo">E</div>
+  <div><h1>E-PAL 10 <span style="font-weight:400;font-size:13px;opacity:.7">v4.0</span></h1><div class="sub">Evaluacion Paliativa en 10 minutos</div></div>
+ </div>
+ <div class="auth">Dr. Alejandro Alassia - Hospital Privado de Comunidad, Mar del Plata</div>
+</div>
+
+<div class="tabs">
+ <button class="tab on" onclick="showPhase(0)" id="tab0"><div style="font-size:14px">&#128203;</div><div class="ti">FASE 0</div><div class="ts">Antes de entrar ~1m</div></button>
+ <button class="tab" onclick="showPhase(1)" id="tab1"><div style="font-size:14px">&#129658;</div><div class="ti">FASE 1</div><div class="ts">Cabecera ~7m</div></button>
+ <button class="tab" onclick="showPhase(2)" id="tab2"><div style="font-size:14px">&#9889;</div><div class="ti">FASE 2</div><div class="ts">Decisiones ~2m</div></button>
+</div>
+
+<div id="alertArea"></div>
+<div id="progressArea"></div>
+<div id="completeBanner" class="complete-banner hidden"><div class="cb-text">&#10003; EVALUACION COMPLETA</div><div class="cb-sub">Todos los campos obligatorios fueron completados</div></div>
+<div class="toast" id="toast"></div>
+
+<div class="content">
+
+<!-- FASE 0 -->
+<div id="phase0">
+ <div class="card">
+  <h3>Revision de Historia Clinica <span class="badge badge-b">PRE-VISITA</span></h3>
+  <p class="info">Antes de entrar: diagnostico principal, situacion oncologica, tratamientos activos, ultimas imagenes y laboratorio.</p>
+  <textarea id="notes" placeholder="Notas clinicas..."></textarea>
+ </div>
+
+ <div class="card">
+  <h3>Surprise Question <span class="badge badge-b">PRONOSTICO</span></h3>
+  <p class="info">Me sorprenderia que este paciente muriera en las proximas 2 semanas?</p>
+  <div class="radio-group" id="sq-group"></div>
+  <p class="ref">Moss AH et al. 2008 - Complementar con PPI en Fase 1</p>
+ </div>
+
+ <div class="card">
+  <h3>ECOG - Estado Funcional <span class="badge badge-b">30 seg</span></h3>
+  <p class="info">Como pasas el dia? Podes moverte solo o necesitas ayuda para casi todo?</p>
+  <div class="radio-group" id="ecog-group"></div>
+  <div id="ecog-alert" class="hidden" style="margin-top:7px;padding:6px 10px;border-radius:6px;background:#E74C3C10"><span style="font-size:11px;font-weight:700;color:var(--cr)">ECOG 3-4: Verificar objetivo terapeutico</span></div>
+  <p class="ref">Oken MM et al. 1982 - Correlacion PPS r=-0.88 (Chow 2020)</p>
+ </div>
+</div>
+
+<!-- FASE 1 — SIN CAMBIOS -->
+<div id="phase1" class="hidden">
+ <div class="card">
+  <h3>ESAS-r Completo <span class="badge badge-b">2-3 min</span></h3>
+  <p class="info">0 = nada, 10 = peor posible. Corte: 4+ intervenir | 7+ urgencia. Ansiedad/Depresion 2+ = screening positivo.</p>
+  <div id="esas-area"></div>
+  <div id="esas-severe" class="hidden" style="margin-top:5px;padding:5px 9px;border-radius:6px;background:#E74C3C10;font-size:11px;font-weight:700;color:var(--cr)"></div>
+  <div id="esas-moderate" class="hidden" style="margin-top:4px;padding:5px 9px;border-radius:6px;background:#F5A62310;font-size:11px;font-weight:700;color:var(--ca)"></div>
+  <p class="ref">Bruera E 1991 - Hui D 2017 - Vignaroli 2006</p>
+ </div>
+
+ <div class="card" id="at4-card">
+  <h3>4AT - Cribado de Delirium <span class="badge badge-b" id="at4-badge">-/12</span></h3>
+  <p class="info">Sin entrenamiento. Menos de 2 min. S:88% E:88% (Tieges 2021, n=3702). Recomendado NICE 2023.</p>
+  <div id="at4-area"></div>
+  <div id="at4-result" class="hidden" style="margin-top:6px;padding:8px 11px;border-radius:7px;font-size:13px;font-weight:800"></div>
+  <p class="ref">Tieges et al. Age Ageing 2021 - 31 estudios, 6000+ pacientes</p>
+ </div>
+
+ <div class="card">
+  <h3>Neurotoxicidad Opioides (NIO) <span class="badge badge-b">CONDICIONAL</span></h3>
+  <p class="info">Solo si recibe opioides. Alucinaciones, mioclonias, confusion post-escalada?</p>
+  <div class="radio-group" id="nio-group"></div>
+ </div>
+
+ <div class="card">
+  <h3>RASS-PAL / RDOS <span class="badge badge-b">CONDICIONAL</span></h3>
+  <p style="font-size:12px;font-weight:600;color:var(--td);margin-bottom:4px">RASS-PAL (sedacion/agitacion)</p>
+  <div class="radio-group" id="rass-group"></div>
+  <p style="font-size:12px;font-weight:600;color:var(--td);margin:10px 0 4px">RDOS (paciente no comunicativo)</p>
+  <div class="radio-group" id="rdos-group"></div>
+ </div>
+
+ <div class="card" id="ppi-card">
+  <h3>PPI - Palliative Prognostic Index <span class="badge badge-b" id="ppi-badge">-/15</span></h3>
+  <p class="info">Morita 1999. No requiere lab. Usa ECOG y 4AT ya cargados. Orienta hacia escenario clinico A / B / C.</p>
+  <div class="grid2">
+   <div class="ppi-box"><div class="ppi-t">PPS (desde ECOG)</div><div class="ppi-v" id="ppi-pps">-</div></div>
+   <div class="ppi-box"><div class="ppi-t">Delirium (desde 4AT)</div><div class="ppi-v" id="ppi-del">+0</div></div>
+  </div>
+  <p style="font-size:12px;font-weight:600;color:var(--td);margin-bottom:4px">Ingesta oral</p>
+  <div class="radio-group" id="ppi-intake"></div>
+  <p style="font-size:12px;font-weight:600;color:var(--td);margin:9px 0 4px">Edema</p>
+  <div class="radio-group" id="ppi-edema"></div>
+  <p style="font-size:12px;font-weight:600;color:var(--td);margin:9px 0 4px">Disnea de reposo</p>
+  <div class="radio-group" id="ppi-dyspnea"></div>
+  <div id="ppi-result" class="hidden result-box"></div>
+  <p class="ref">Morita T et al. J Pain Symptom Manage 1999 | Validacion: Glare P, Ann Oncol 2004</p>
+ </div>
+
+ <div class="card">
+  <h3>Evaluacion Psicosocial <span class="badge badge-a">SIMULTANEO</span></h3>
+  <p class="info">Profundizar ESAS emocional 4+. Desesperanza, sentido, afrontamiento.</p>
+  <p style="font-size:12px;font-weight:700;color:var(--cd);margin-bottom:5px">Cuidador principal</p>
+  <p style="font-size:11px;font-weight:600;margin-bottom:3px">Claudicacion</p>
+  <div class="radio-group" id="claud-group"></div>
+  <p style="font-size:11px;font-weight:600;margin:7px 0 3px">Red de apoyo</p>
+  <div class="radio-group" id="red-group"></div>
+  <p style="font-size:11px;font-weight:600;margin:7px 0 3px">Menores o dependientes</p>
+  <div class="radio-group" id="menores-group"></div>
+ </div>
+</div>
+
+<!-- FASE 2 — REDISEÑADA v4 -->
+<div id="phase2" class="hidden">
+
+ <!-- 1. OBJETIVO TERAPEUTICO -->
+ <div class="card">
+  <h3>Objetivo Terapeutico <span class="badge badge-a">DEFINIR</span></h3>
+  <p class="info">El PPI orienta el escenario. El profesional define el objetivo considerando contexto clinico completo.</p>
+  <div class="radio-group" id="obj-group"></div>
+  <div id="obj-orient" class="hidden" style="margin-top:8px"></div>
+ </div>
+
+ <!-- 2. ESTILO DE INFORMACION DESEADA -->
+ <div class="card">
+  <h3>Estilo de Informacion Deseada <span class="badge badge-p">PACIENTE</span></h3>
+  <p class="info">Como prefiere el paciente recibir informacion sobre su situacion y decisiones? Explorar activamente.</p>
+  <div class="info-style-grid" id="info-style-grid">
+   <button class="is-btn" onclick="setInfoStyle('activo')" id="is-activo">
+    <div class="is-icon">&#128065;</div>
+    <div class="is-label">ACTIVO</div>
+    <div class="is-desc">Quiere toda la informacion y participa en decisiones</div>
+   </button>
+   <button class="is-btn" onclick="setInfoStyle('compartido')" id="is-compartido">
+    <div class="is-icon">&#129309;</div>
+    <div class="is-label">COMPARTIDO</div>
+    <div class="is-desc">Recibe informacion y decide junto al equipo y familia</div>
+   </button>
+   <button class="is-btn" onclick="setInfoStyle('pasivo')" id="is-pasivo">
+    <div class="is-icon">&#128106;</div>
+    <div class="is-label">PASIVO</div>
+    <div class="is-desc">Prefiere que decida la familia o el equipo medico</div>
+   </button>
+  </div>
+  <p style="font-size:11px;font-weight:600;color:var(--td);margin-bottom:4px">Observaciones</p>
+  <textarea id="info-style-obs" placeholder="Ej: Prefiere no saber pronostico pero si participar en decisiones de confort..." style="min-height:38px"></textarea>
+  <p class="ref">Cassileth BR 1980 - Street RL 2005 - Adaptado a contexto latinoamericano</p>
+ </div>
+
+ <!-- 3. DIRECTIVAS DE REANIMACION -->
+ <div class="card">
+  <h3>Directivas de Reanimacion</h3>
+  <div class="dir-grid" id="dir-area"></div>
+ </div>
+
+ <!-- 4. PLAN FARMACOLOGICO -->
+ <div class="card">
+  <h3>Plan Terapeutico <span class="badge badge-d">REGISTRAR</span></h3>
+
+  <div class="plan-label farm">
+   <span>&#128138; Tratamiento Farmacologico</span>
+   <span class="pl-badge">Farmacos</span>
+  </div>
+  <textarea id="plan-farm" placeholder="Ej: Morfina 2.5mg SC c/4h PRN dolor | Metoclopramida 10mg VO c/8h | Haloperidol 1mg SC noche..." style="min-height:52px"></textarea>
+
+  <div class="plan-label nofarm">
+   <span>&#129382; Tratamiento No Farmacologico</span>
+   <span class="pl-badge">No farmacos</span>
+  </div>
+  <textarea id="plan-nofarm" placeholder="Ej: Posicion semisentado | Curaciones secas | Higiene bucal | Musicoterapia | Acompanamiento familiar continuo..." style="min-height:52px"></textarea>
+
+  <div class="plan-label directivas">
+   <span>&#128203; Directivas para el Equipo Primario</span>
+   <span class="pl-badge">Comunicar</span>
+  </div>
+  <textarea id="plan-directivas" placeholder="Ej: No escalar ATB | Suspender quimio | Limitar laboratorio a lo sintomatico | Informar a guardia sobre CODE | Avisar si RASS < -2..." style="min-height:52px"></textarea>
+
+  <p class="ref">Campos de texto libre para registro en historia clinica</p>
+ </div>
+
+ <!-- 5. REGISTRO DE CIERRE -->
+ <div class="card" id="summary-card">
+  <h3>Registro de Cierre E-PAL 10 <span class="badge badge-d">REGISTRAR</span></h3>
+  <div class="summary" id="summary-text"></div>
+  <div class="share-row">
+   <button class="share-btn share-copy" onclick="copyReport()">&#128203; Copiar</button>
+   <button class="share-btn share-wa" onclick="shareWA()">&#128172; WhatsApp</button>
+   <button class="share-btn share-mail" onclick="shareMail()">&#9993; Email</button>
+   <button class="share-btn share-dl" onclick="downloadReport()">&#128190; Descargar</button>
+  </div>
+ </div>
+
+</div>
+</div>
+
+<div class="footer">
+ <span>E-PAL 10 v4.0 | No reemplaza el juicio profesional</span>
+ <div style="display:flex;gap:5px">
+  <button class="btn-prev hidden" id="btnPrev" onclick="prevPhase()">Anterior</button>
+  <button class="btn-next" id="btnNext" onclick="nextPhase()">Siguiente</button>
+ </div>
+</div>
+
+<script>
+let state = {
+ phase: 0, ecog: null, sq: null, nio: null, rass: null, rdos: null,
+ esas: {dolor:null,fatiga:null,nauseas:null,apetito:null,somnolencia:null,disnea:null,insomnio:null,bienestar:null,ansiedad:null,depresion:null},
+ at4: {alertness:null,amt4:null,attention:null,acute:null},
+ ppi: {intake:null,edema:null,dyspnea:null},
+ claud:null, red:null, menores:null, obj:null,
+ infoStyle: null,
+ dir:{rcp:null,iot:null,uci:null}
+};
+
+const esasItems = [
+ {id:"dolor",l:"Dolor"},{id:"fatiga",l:"Fatiga / Cansancio"},{id:"nauseas",l:"Nauseas"},
+ {id:"apetito",l:"Falta de apetito"},{id:"somnolencia",l:"Somnolencia"},{id:"disnea",l:"Disnea"},
+ {id:"insomnio",l:"Insomnio"},{id:"bienestar",l:"Malestar general"},
+ {id:"ansiedad",l:"Ansiedad"},{id:"depresion",l:"Depresion"}
+];
+
+function gc(v){return v<=3?"var(--cg)":v<=6?"var(--ca)":"var(--cr)"}
+function gcc(v){return v<=3?"#27AE60":v<=6?"#F5A623":"#E74C3C"}
+
+function buildRadio(containerId, options, stateKey, parentKey){
+ const el = document.getElementById(containerId);
+ el.innerHTML = "";
+ options.forEach(o => {
+  const btn = document.createElement("button");
+  btn.className = "radio-btn" + (getVal(stateKey,parentKey)===o.v ? " on" : "");
+  btn.innerHTML = '<div class="radio-dot"></div><span>'+o.l+'</span>';
+  btn.onclick = () => { setVal(stateKey,parentKey,o.v); render(); };
+  el.appendChild(btn);
+ });
+}
+
+function getVal(k,pk){return pk?state[pk][k]:state[k]}
+function setVal(k,pk,v){if(pk)state[pk][k]=v;else state[k]=v;}
+
+function setInfoStyle(val){
+ state.infoStyle = val;
+ ["activo","compartido","pasivo"].forEach(s => {
+  document.getElementById("is-"+s).classList.toggle("on", s===val);
+ });
+ render();
+}
+
+function buildEsas(){
+ const area = document.getElementById("esas-area");
+ area.innerHTML = "";
+ esasItems.forEach(s => {
+  const row = document.createElement("div");
+  row.className = "slider-row";
+  const v = state.esas[s.id];
+  const vc = v!==null?gcc(v):"#aaa";
+  row.innerHTML = '<div class="sl-head"><span class="sl-label">'+s.l+'</span><span class="sl-val" style="color:'+vc+'">'+(v!==null?v:"-")+'</span></div><div class="sl-btns" id="esas-btns-'+s.id+'"></div>';
+  area.appendChild(row);
+  const btns = row.querySelector(".sl-btns");
+  for(let i=0;i<=10;i++){
+   const b = document.createElement("button");
+   b.className = "sl-btn";
+   b.textContent = i;
+   if(v===i){b.style.background=gcc(i);b.style.color="#fff";b.style.fontWeight="800";}
+   else if(v!==null&&i<=v){b.style.background=gcc(v)+"44";}
+   b.onclick = () => {state.esas[s.id]=i;render();};
+   btns.appendChild(b);
+  }
+ });
+}
+
+function buildAt4(){
+ const items = [
+  {id:"alertness",t:"1. Nivel de conciencia",d:"Observe al paciente",opts:[{v:0,l:"Normal / Somnolencia leve"},{v:4,l:"Claramente anormal"}]},
+  {id:"amt4",t:"2. AMT4 - Orientacion",d:"Edad, fecha nacimiento, lugar, ano",opts:[{v:0,l:"Sin errores"},{v:1,l:"1 error"},{v:2,l:"2+ errores / no evaluable"}]},
+  {id:"attention",t:"3. Atencion",d:"Meses del ano en orden inverso",opts:[{v:0,l:"7+ meses correctos"},{v:1,l:"Menos de 7 o se niega"},{v:2,l:"No evaluable"}]},
+  {id:"acute",t:"4. Cambio agudo/fluctuante",d:"Cambio en conciencia ultimas 2 semanas",opts:[{v:0,l:"No"},{v:4,l:"Si"}]}
+ ];
+ const area = document.getElementById("at4-area");
+ area.innerHTML = "";
+ items.forEach(item => {
+  const div = document.createElement("div");
+  div.style.marginBottom = "11px";
+  div.innerHTML = '<div style="font-size:12px;font-weight:700;color:var(--cd)">'+item.t+'</div><div style="font-size:10px;color:var(--tm);margin-bottom:4px">'+item.d+'</div><div class="radio-group" id="at4-'+item.id+'"></div>';
+  area.appendChild(div);
+  buildRadio("at4-"+item.id, item.opts, item.id, "at4");
+ });
+}
+
+function buildDirGrid(){
+ const area = document.getElementById("dir-area");
+ area.innerHTML = "";
+ [{k:"rcp",l:"RCP"},{k:"iot",l:"IOT"},{k:"uci",l:"UCI"}].forEach(d => {
+  const col = document.createElement("div");
+  col.innerHTML = '<div class="dir-label">'+d.l+'</div><div class="dir-btns" id="dir-'+d.k+'"></div>';
+  area.appendChild(col);
+  ["Si","No"].forEach(opt => {
+   const b = document.createElement("button");
+   b.className = "dir-btn";
+   b.textContent = opt;
+   const val = opt.toLowerCase();
+   if(state.dir[d.k]===val){
+    b.style.background = opt==="No"?"var(--cr)":"var(--cg)";
+    b.style.color = "#fff";
+   }
+   b.onclick = () => {state.dir[d.k]=val;render();};
+   col.querySelector(".dir-btns").appendChild(b);
+  });
+ });
+}
+
+function calcAt4(){
+ const vals = Object.values(state.at4);
+ if(vals.some(v=>v===null)) return null;
+ return vals.reduce((a,b)=>a+b,0);
+}
+
+function calcPPI(){
+ if(state.ecog===null||state.ppi.intake===null||state.ppi.edema===null||state.ppi.dyspnea===null) return null;
+ const pps = state.ecog>=4?4:state.ecog>=3?2.5:0;
+ const del = (calcAt4()!==null&&calcAt4()>=4)?4:0;
+ return pps+state.ppi.intake+state.ppi.edema+state.ppi.dyspnea+del;
+}
+
+// ── ESCENARIOS A/B/C con S/E ──
+function getEscenarioData(ppiT){
+ if(ppiT===null) return null;
+ if(ppiT > 6) return {
+  id:"C", label:"Escenario C — Fin de vida / Confort",
+  ecog:"ECOG 4", sobrevida:"Dias a pocas semanas",
+  rec:"Objetivo confort exclusivo (ONR). Suspender tratamiento modificador. Sedacion proporcional si corresponde.",
+  color:"#E74C3C", bg:"#E74C3C10", border:"#E74C3C30",
+  stats:[
+   {l:"PPI > 6", desc:"Sobrevida < 3 semanas"},
+   {l:"S: 80%", desc:"Sensibilidad"},
+   {l:"E: 85%", desc:"Especificidad"},
+   {l:"LR+: 5.3", desc:"Likelihood ratio positivo"}
+  ]
+ };
+ if(ppiT > 4) return {
+  id:"B", label:"Escenario B — Adecuacion del esfuerzo terapeutico",
+  ecog:"ECOG 3", sobrevida:"Semanas a pocos meses",
+  rec:"Revisar objetivos. Limitar intervencionismo. Control sintomatico intensivo. Comunicacion pronostica.",
+  color:"#F5A623", bg:"#F5A62310", border:"#F5A62330",
+  stats:[
+   {l:"PPI 4-6", desc:"Sobrevida < 6 semanas"},
+   {l:"S: 80%", desc:"Sensibilidad"},
+   {l:"E: 77%", desc:"Especificidad"},
+   {l:"LR+: 3.5", desc:"Likelihood ratio positivo"}
+  ]
+ };
+ return {
+  id:"A", label:"Escenario A — Tratamiento modificador activo",
+  ecog:"ECOG 0-2", sobrevida:"Meses a anos",
+  rec:"Continuar tratamiento oncologico activo. Control sintomatico complementario. Planificacion anticipada.",
+  color:"#27AE60", bg:"#27AE6010", border:"#27AE6030",
+  stats:[
+   {l:"PPI ≤ 4", desc:"Sobrevida > 6 semanas"},
+   {l:"S: 90%", desc:"Sensibilidad"},
+   {l:"E: 60%", desc:"Especificidad"},
+   {l:"LR-: 0.2", desc:"Likelihood ratio negativo"}
+  ]
+ };
+}
+
+function getAlerts(){
+ const a=[];
+ const at4s=calcAt4();
+ if(at4s!==null&&at4s>=4) a.push("Delirium probable (4AT>=4)");
+ const sev=esasItems.filter(s=>state.esas[s.id]!==null&&state.esas[s.id]>=7).map(s=>s.l);
+ if(sev.length) a.push("Urgencia: "+sev.join(", ")+" >=7");
+ if(state.rdos!==null&&state.rdos>=3) a.push("RDOS>=3 Paliar disnea");
+ if(state.nio==="si") a.push("NIO - Rotacion opioide");
+ if(state.claud==="si") a.push("Claudicacion cuidador");
+ if(state.ecog!==null&&state.ecog>=3&&state.obj===null) a.push("ECOG 3-4 sin objetivo");
+ if((state.esas.ansiedad!==null&&state.esas.ansiedad>=7)||(state.esas.depresion!==null&&state.esas.depresion>=7)) a.push("Malestar emocional >=7");
+ return a;
+}
+
+function render(){
+ // ECOG alert
+ document.getElementById("ecog-alert").classList.toggle("hidden",!(state.ecog!==null&&state.ecog>=3));
+ // ESAS
+ buildEsas();
+ const sev=esasItems.filter(s=>state.esas[s.id]!==null&&state.esas[s.id]>=7).map(s=>s.l);
+ const mod=esasItems.filter(s=>state.esas[s.id]!==null&&state.esas[s.id]>=4&&state.esas[s.id]<7).map(s=>s.l);
+ const sevEl=document.getElementById("esas-severe");
+ const modEl=document.getElementById("esas-moderate");
+ if(sev.length){sevEl.classList.remove("hidden");sevEl.textContent="Urgencia: "+sev.join(", ");}else sevEl.classList.add("hidden");
+ if(mod.length){modEl.classList.remove("hidden");modEl.textContent="Intervenir: "+mod.join(", ");}else modEl.classList.add("hidden");
+ // 4AT
+ buildAt4();
+ const at4s=calcAt4();
+ const at4b=document.getElementById("at4-badge");
+ const at4r=document.getElementById("at4-result");
+ const at4c=document.getElementById("at4-card");
+ if(at4s!==null){
+  at4b.textContent=at4s+"/12";
+  at4b.className="badge "+(at4s>=4?"badge-r":"badge-b");
+  at4c.classList.toggle("alert",at4s>=4);
+  at4r.classList.remove("hidden");
+  const col=at4s>=4?"var(--cr)":at4s>=1?"var(--ca)":"var(--cg)";
+  at4r.style.background=(at4s>=4?"#E74C3C":at4s>=1?"#F5A623":"#27AE60")+"12";
+  at4r.style.color=col;
+  at4r.textContent="4AT = "+at4s+" "+(at4s>=4?"Delirium probable":at4s>=1?"Posible deterioro cognitivo":"Delirium improbable");
+ } else {at4b.textContent="-/12";at4r.classList.add("hidden");at4c.classList.remove("alert");}
+
+ // PPI
+ const pps=state.ecog!==null?(state.ecog>=4?4:state.ecog>=3?2.5:0):null;
+ const del=(at4s!==null&&at4s>=4)?4:0;
+ document.getElementById("ppi-pps").textContent=pps!==null?"+"+pps:"-";
+ document.getElementById("ppi-del").textContent="+"+del;
+ document.getElementById("ppi-del").style.color=del>0?"var(--cr)":"var(--cg)";
+ buildRadio("ppi-intake",[{v:0,l:"Normal"},{v:1,l:"Reducida moderada"},{v:2.5,l:"Severamente reducida"}],"intake","ppi");
+ buildRadio("ppi-edema",[{v:0,l:"Ausente"},{v:1,l:"Presente"}],"edema","ppi");
+ buildRadio("ppi-dyspnea",[{v:0,l:"Ausente"},{v:3.5,l:"Presente"}],"dyspnea","ppi");
+ const ppiT=calcPPI();
+ const ppir=document.getElementById("ppi-result");
+ const ppib=document.getElementById("ppi-badge");
+ if(ppiT!==null){
+  const esc=getEscenarioData(ppiT);
+  ppir.classList.remove("hidden");
+  ppir.style.background=esc.bg;
+  ppir.style.border="1px solid "+esc.border;
+  // Stats row
+  const statsHtml=esc.stats.map(s=>'<div style="flex:1;text-align:center;padding:5px 4px;background:rgba(255,255,255,.6);border-radius:6px"><div style="font-size:12px;font-weight:800;color:'+esc.color+'">'+s.l+'</div><div style="font-size:9px;color:var(--tm);margin-top:1px">'+s.desc+'</div></div>').join("");
+  ppir.innerHTML=
+   '<div style="font-size:11px;font-weight:600;color:'+esc.color+';text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">Estimacion pronostica</div>'+
+   '<div style="font-size:15px;font-weight:800;color:'+esc.color+'">PPI '+ppiT.toFixed(1)+' &rarr; '+esc.label+'</div>'+
+   '<div style="font-size:10px;color:var(--tm);margin-top:2px">'+esc.ecog+' &nbsp;|&nbsp; Sobrevida estimada: '+esc.sobrevida+'</div>'+
+   '<div style="display:flex;gap:4px;margin-top:8px">'+statsHtml+'</div>'+
+   '<div style="font-size:10px;margin-top:8px;padding-top:6px;border-top:1px solid '+esc.border+';color:'+esc.color+';font-weight:600">&#128073; '+esc.rec+'</div>';
+  ppib.textContent=ppiT.toFixed(1)+"/15";
+  ppib.className="badge "+(ppiT>6?"badge-r":ppiT>4?"badge-a":"badge-g");
+ } else {ppir.classList.add("hidden");ppib.textContent="-/15";ppib.className="badge badge-b";}
+
+ // Other radios
+ buildRadio("sq-group",[{v:"si",l:"Si, me sorprenderia"},{v:"no",l:"No me sorprenderia - Protocolo ultimos dias"}],"sq",null);
+ buildRadio("ecog-group",[{v:0,l:"ECOG 0 - Asintomatico"},{v:1,l:"ECOG 1 - Restriccion leve"},{v:2,l:"ECOG 2 - Ambulatorio >50%"},{v:3,l:"ECOG 3 - En cama >50%"},{v:4,l:"ECOG 4 - Postrado"}],"ecog",null);
+ buildRadio("nio-group",[{v:"no",l:"Ausente"},{v:"si",l:"Presente - Rotacion opioide"}],"nio",null);
+ buildRadio("rass-group",[{v:4,l:"+4 a +1: Agitado"},{v:0,l:"0: Alerta y calmo"},{v:-2,l:"-1 a -3: Somnoliento"},{v:-4,l:"-4: Solo tacto"},{v:-5,l:"-5: No responde"}],"rass",null);
+ buildRadio("rdos-group",[{v:0,l:"0-2: Sin disnea"},{v:3,l:"3+: Disnea - Paliar"}],"rdos",null);
+ buildRadio("claud-group",[{v:"no",l:"Contenido"},{v:"si",l:"Claudicacion - Derivar"}],"claud",null);
+ buildRadio("red-group",[{v:"si",l:"Red activa"},{v:"no",l:"Aislado"}],"red",null);
+ buildRadio("menores-group",[{v:"no",l:"No"},{v:"si",l:"Si - Alertar"}],"menores",null);
+
+ // Objetivo con orientacion del PPI
+ buildRadio("obj-group",[
+  {v:"activo",l:"A — Tratamiento activo (Meses/anos, ECOG 0-2)"},
+  {v:"transicion",l:"B — Adecuacion esfuerzo terapeutico (Semanas, ECOG 3)"},
+  {v:"confort",l:"C — Confort exclusivo / ONR (Dias, ECOG 4)"}
+ ],"obj",null);
+
+ // Orientacion PPI vs decision clinica
+ const objOrient=document.getElementById("obj-orient");
+ if(ppiT!==null && state.obj!==null){
+  const ppiEsc=ppiT>6?"C":ppiT>4?"B":"A";
+  const objEsc=state.obj==="activo"?"A":state.obj==="transicion"?"B":"C";
+  if(ppiEsc===objEsc){
+   objOrient.classList.remove("hidden");
+   objOrient.style.background="#27AE6010";
+   objOrient.style.border="1px solid #27AE6030";
+   objOrient.style.borderRadius="8px";
+   objOrient.style.padding="8px 11px";
+   objOrient.innerHTML='<span style="font-size:11px;font-weight:700;color:var(--cg)">&#10003; PPI y objetivo clinico coinciden en Escenario '+ppiEsc+'</span>';
+  } else {
+   objOrient.classList.remove("hidden");
+   objOrient.style.background="#F5A62310";
+   objOrient.style.border="1px solid #F5A62330";
+   objOrient.style.borderRadius="8px";
+   objOrient.style.padding="8px 11px";
+   objOrient.innerHTML='<span style="font-size:11px;font-weight:700;color:var(--ca)">&#9888; PPI orienta Escenario '+ppiEsc+' — objetivo clinico definido: Escenario '+objEsc+'. Considerar si el contexto justifica la diferencia.</span>';
+  }
+ } else {
+  objOrient.classList.add("hidden");
+ }
+
+ // Info style sync
+ if(state.infoStyle){
+  ["activo","compartido","pasivo"].forEach(s=>{
+   document.getElementById("is-"+s).classList.toggle("on",s===state.infoStyle);
+  });
+ }
+
+ // Directivas
+ buildDirGrid();
+
+ // Alerts
+ const alerts=getAlerts();
+ const aa=document.getElementById("alertArea");
+ if(alerts.length){
+  aa.innerHTML='<div class="alert-box"><div class="at">ALERTAS CLINICAS ('+alerts.length+')</div>'+alerts.map(a=>'<div class="ai">&#8226; '+a+'</div>').join("")+'</div>';
+ } else aa.innerHTML="";
+
+ // Summary
+ const sevS=esasItems.filter(s=>state.esas[s.id]!==null&&state.esas[s.id]>=7).map(s=>s.l);
+ const modS2=esasItems.filter(s=>state.esas[s.id]!==null&&state.esas[s.id]>=4&&state.esas[s.id]<7).map(s=>s.l);
+ const ppiV=calcPPI();
+ const esc=getEscenarioData(ppiV);
+ const ppiLab=ppiV!==null?"Esc. "+(esc?esc.id:"-")+" | PPI "+ppiV.toFixed(1)+" | "+esc.sobrevida:"-";
+ const at4V=calcAt4();
+ const infoStyleLabel={activo:"Activo",compartido:"Compartido",pasivo:"Pasivo"}[state.infoStyle]||"-";
+ const farmTxt=document.getElementById("plan-farm")?document.getElementById("plan-farm").value:"";
+ const nofarmTxt=document.getElementById("plan-nofarm")?document.getElementById("plan-nofarm").value:"";
+ const dirTxt=document.getElementById("plan-directivas")?document.getElementById("plan-directivas").value:"";
+ const obsInfoTxt=document.getElementById("info-style-obs")?document.getElementById("info-style-obs").value:"";
+ const sumEl=document.getElementById("summary-text");
+ sumEl.innerHTML=[
+  "<b>Escenario PPI:</b> "+ppiLab,
+  "<b>ECOG:</b> "+(state.ecog!==null?state.ecog:"-"),
+  "<b>Sintoma prioritario:</b> "+(sevS.length?sevS[0]+" >=7":modS2.length?modS2[0]+" >=4":"-"),
+  "<b>4AT:</b> "+(at4V!==null?at4V+(at4V>=4?" Delirium":" Neg"):"-"),
+  "<b>RASS/RDOS:</b> "+(state.rass!==null?"RASS "+state.rass:"-")+(state.rdos!==null?" | RDOS "+(state.rdos>=3?"3+":"ok"):""),
+  "<b>Emocional:</b> Anx "+(state.esas.ansiedad!==null?state.esas.ansiedad:"-")+" / Dep "+(state.esas.depresion!==null?state.esas.depresion:"-"),
+  "<b>Cuidador:</b> "+(state.claud?(state.claud==="si"?"Claudicacion":"Contenido"):"-"),
+  "<b>Objetivo:</b> "+(state.obj||"-")+" | RCP:"+(state.dir.rcp||"-")+" IOT:"+(state.dir.iot||"-")+" UCI:"+(state.dir.uci||"-"),
+  "<b>Inf. deseada:</b> "+infoStyleLabel+(obsInfoTxt?" | "+obsInfoTxt:""),
+  farmTxt?"<b>Farmacologico:</b> "+farmTxt:"",
+  nofarmTxt?"<b>No farmacologico:</b> "+nofarmTxt:"",
+  dirTxt?"<b>Directivas equipo:</b> "+dirTxt:"",
+  "<b>Alertas:</b> "+(alerts.length?alerts.join(" | "):"Ninguna")
+ ].filter(Boolean).join("<br>");
+ document.getElementById("summary-card").classList.toggle("alert",alerts.length>0);
+}
+
+function showPhase(n){
+ state.phase=n;
+ document.querySelectorAll(".tab").forEach((t,i)=>t.classList.toggle("on",i===n));
+ ["phase0","phase1","phase2"].forEach((id,i)=>{
+  document.getElementById(id).classList.toggle("hidden",i!==n);
+ });
+ document.getElementById("btnPrev").classList.toggle("hidden",n===0);
+ document.getElementById("btnNext").classList.toggle("hidden",n===2);
+ render();
+}
+function nextPhase(){if(state.phase<2)showPhase(state.phase+1);}
+function prevPhase(){if(state.phase>0)showPhase(state.phase-1);}
+
+function getCompletionItems(){
+ var items=[];
+ items.push({label:"ECOG",done:state.ecog!==null,phase:0});
+ items.push({label:"Surprise Q",done:state.sq!==null,phase:0});
+ var esasDone=Object.values(state.esas).filter(function(v){return v!==null}).length;
+ items.push({label:"ESAS ("+esasDone+"/10)",done:esasDone===10,phase:1});
+ items.push({label:"4AT",done:calcAt4()!==null,phase:1});
+ items.push({label:"PPI",done:calcPPI()!==null,phase:1});
+ items.push({label:"Cuidador",done:state.claud!==null,phase:1});
+ items.push({label:"Objetivo",done:state.obj!==null,phase:2});
+ items.push({label:"Inf. deseada",done:state.infoStyle!==null,phase:2});
+ items.push({label:"Directivas",done:state.dir.rcp!==null&&state.dir.iot!==null&&state.dir.uci!==null,phase:2});
+ return items;
+}
+
+function renderProgress(){
+ var items=getCompletionItems();
+ var total=items.length;
+ var done=items.filter(function(i){return i.done}).length;
+ var pct=Math.round((done/total)*100);
+ var phaseItems=items.filter(function(i){return i.phase===state.phase});
+ var allDone=done===total;
+ var col=allDone?"#27AE60":pct>=60?"#F5A623":"#6CABDD";
+ var area=document.getElementById("progressArea");
+ var html='<div class="progress-bar">';
+ html+='<div class="pb-title"><span>Progreso: '+done+'/'+total+'</span><span style="color:'+col+';font-weight:800">'+pct+'%</span></div>';
+ html+='<div class="pb-track"><div class="pb-fill" style="width:'+pct+'%;background:'+col+'"></div></div>';
+ html+='<div class="pb-items">';
+ phaseItems.forEach(function(i){
+  html+='<span class="pb-item '+(i.done?"done":"pending")+'">'+(i.done?"&#10003; ":"&#9679; ")+i.label+'</span>';
+ });
+ html+='</div></div>';
+ area.innerHTML=html;
+ document.getElementById("completeBanner").classList.toggle("hidden",!allDone);
+}
+
+function buildReportText(){
+ var ppiV=calcPPI();
+ var esc=getEscenarioData(ppiV);
+ var ppiLab=ppiV!==null?"Escenario "+(esc?esc.id:"-")+" | PPI "+ppiV.toFixed(1)+" | "+esc.sobrevida:"-";
+ var at4V=calcAt4();
+ var sevS=esasItems.filter(function(s){return state.esas[s.id]!==null&&state.esas[s.id]>=7}).map(function(s){return s.l});
+ var alerts=getAlerts();
+ var now=new Date();
+ var fecha=now.toLocaleDateString("es-AR")+" "+now.toLocaleTimeString("es-AR",{hour:"2-digit",minute:"2-digit"});
+ var infoStyleLabel={activo:"Activo (quiere toda la informacion)",compartido:"Compartido (decide con equipo/familia)",pasivo:"Pasivo (decide familia o equipo)"}[state.infoStyle]||"-";
+ var farmTxt=document.getElementById("plan-farm")?document.getElementById("plan-farm").value:"";
+ var nofarmTxt=document.getElementById("plan-nofarm")?document.getElementById("plan-nofarm").value:"";
+ var dirTxt=document.getElementById("plan-directivas")?document.getElementById("plan-directivas").value:"";
+ var obsInfoTxt=document.getElementById("info-style-obs")?document.getElementById("info-style-obs").value:"";
+ var txt="=== E-PAL 10 v4.0 ===\n";
+ txt+="Fecha: "+fecha+"\n";
+ var n=document.getElementById("notes").value;
+ if(n) txt+="Notas: "+n+"\n";
+ txt+="\n--- EVALUACION ---\n";
+ txt+="Escenario PPI: "+ppiLab+"\n";
+ if(esc) txt+="Orientacion: "+esc.rec+"\n";
+ txt+="ECOG: "+(state.ecog!==null?state.ecog:"-")+"\n";
+ txt+="\nESAS-r:\n";
+ esasItems.forEach(function(s){
+  var v=state.esas[s.id];
+  if(v!==null) txt+="  "+s.l+": "+v+"/10"+(v>=7?" [URGENCIA]":v>=4?" [INTERVENIR]":"")+"\n";
+ });
+ txt+="\n4AT: "+(at4V!==null?at4V+"/12"+(at4V>=4?" DELIRIUM PROBABLE":at4V>=1?" Posible deterioro":" Negativo"):"-")+"\n";
+ if(state.nio) txt+="NIO: "+(state.nio==="si"?"PRESENTE":"Ausente")+"\n";
+ if(state.rass!==null) txt+="RASS: "+state.rass+"\n";
+ if(state.rdos!==null) txt+="RDOS: "+(state.rdos>=3?">=3 PALIAR":"<3 ok")+"\n";
+ txt+="Cuidador: "+(state.claud?(state.claud==="si"?"CLAUDICACION":"Contenido"):"-");
+ txt+=" | Red: "+(state.red||"-")+" | Menores: "+(state.menores||"-")+"\n";
+ txt+="\n--- PLAN ---\n";
+ txt+="Objetivo: "+(state.obj||"-")+"\n";
+ txt+="Informacion deseada: "+infoStyleLabel+"\n";
+ if(obsInfoTxt) txt+="  Obs: "+obsInfoTxt+"\n";
+ txt+="RCP:"+(state.dir.rcp||"-")+" IOT:"+(state.dir.iot||"-")+" UCI:"+(state.dir.uci||"-")+"\n";
+ if(farmTxt) txt+="\nTratamiento farmacologico:\n"+farmTxt+"\n";
+ if(nofarmTxt) txt+="\nTratamiento no farmacologico:\n"+nofarmTxt+"\n";
+ if(dirTxt) txt+="\nDirectivas para el equipo primario:\n"+dirTxt+"\n";
+ if(alerts.length){txt+="\n--- ALERTAS ---\n";alerts.forEach(function(a){txt+="> "+a+"\n"});}
+ txt+="\n[E-PAL 10 v4.0 - Dr. Alassia - HPC Mar del Plata]";
+ return txt;
+}
+
+function showToast(msg){
+ var t=document.getElementById("toast");
+ t.textContent=msg;t.classList.add("show");
+ setTimeout(function(){t.classList.remove("show")},1800);
+}
+
+function copyReport(){
+ var txt=buildReportText();
+ if(navigator.clipboard){
+  navigator.clipboard.writeText(txt).then(function(){showToast("Copiado al portapapeles")});
+ } else {
+  var ta=document.createElement("textarea");
+  ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand("copy");
+  document.body.removeChild(ta);showToast("Copiado");
+ }
+}
+function shareWA(){var txt=buildReportText();window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");}
+function shareMail(){var txt=buildReportText();window.location.href="mailto:?subject="+encodeURIComponent("E-PAL 10 - Evaluacion Paliativa")+"&body="+encodeURIComponent(txt);}
+function downloadReport(){
+ var txt=buildReportText();
+ var blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+ var url=URL.createObjectURL(blob);
+ var a=document.createElement("a");
+ a.href=url;a.download="EPAL10_"+new Date().toISOString().slice(0,10)+".txt";
+ document.body.appendChild(a);a.click();document.body.removeChild(a);
+ URL.revokeObjectURL(url);showToast("Descargado");
+}
+
+var origRender=render;
+render=function(){origRender();renderProgress();};
+render();
+</script>
+</body>
+</html>
